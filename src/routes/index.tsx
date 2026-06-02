@@ -145,12 +145,20 @@ function Index() {
           </span>
         </button>
 
-        <button
-          onClick={confirmReset}
-          className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-        >
-          成約した！カウンターをリセット
-        </button>
+        <div className="flex flex-col items-center gap-3">
+          <button
+            onClick={confirmReset}
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
+            成約した！カウンターをリセット
+          </button>
+          <button
+            onClick={() => setShowFullResetDialog(true)}
+            className="text-xs text-destructive/80 underline-offset-4 hover:underline"
+          >
+            完全リセット（全データ削除）
+          </button>
+        </div>
       </main>
 
       <footer className="text-xs text-muted-foreground text-center max-w-md">
