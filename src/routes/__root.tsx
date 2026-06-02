@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "断られログ｜メンタル回復カウンター" },
+      { name: "description", content: "営業で断られた回数を「ナイスチャレンジ」として記録するおもちゃアプリです。個人情報は一切保存されないので、安心してポチッと押してください！" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "断られログ｜メンタル回復カウンター" },
+      { property: "og:description", content: "営業で断られた回数を「ナイスチャレンジ」として記録するおもちゃアプリです。個人情報は一切保存されないので、安心してポチッと押してください！" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "断られログ｜メンタル回復カウンター" },
+      { name: "twitter:description", content: "営業で断られた回数を「ナイスチャレンジ」として記録するおもちゃアプリです。個人情報は一切保存されないので、安心してポチッと押してください！" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/g65aGR1WRyeShGJEVVWRCohjS4A3/social-images/social-1780385124422-IMG_8131.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/g65aGR1WRyeShGJEVVWRCohjS4A3/social-images/social-1780385124422-IMG_8131.webp" },
     ],
     links: [
       {
