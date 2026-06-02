@@ -84,6 +84,14 @@ function Index() {
     setShowResetDialog(false);
   };
 
+  const doFullReset = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setCount(0);
+    setShowFullResetDialog(false);
+    setCheer("完全リセット完了。さあ、ゼロから！");
+    setTimeout(() => setCheer(null), 2200);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-between px-6 py-10 bg-gradient-hero relative">
       <header className="w-full max-w-md text-center">
