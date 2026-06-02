@@ -98,6 +98,9 @@ function Index() {
         <p className="text-xs tracking-[0.3em] text-muted-foreground uppercase">Rejection Log</p>
         <h1 className="text-2xl font-bold text-foreground mt-2">断られログ</h1>
         <p className="text-sm text-muted-foreground mt-1">ビルを出たら、ポチッと。</p>
+        <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+          10回声をかけて、3回話を聞いてもらえて、<br />1件成約する。
+        </p>
       </header>
 
       <main className="w-full max-w-md flex flex-col items-center gap-8">
