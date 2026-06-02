@@ -26,6 +26,7 @@ function Index() {
   const [count, setCount] = useState(0);
   const [cheer, setCheer] = useState<string | null>(null);
   const [pulse, setPulse] = useState(0);
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -46,14 +47,23 @@ function Index() {
     setTimeout(() => setCheer(null), 1800);
   };
 
-  const handleClose = () => {
+  const confirmReset = () => {
+    setShowResetDialog(true);
+  };
+
+  const doReset = () => {
     setCount(0);
+    setShowResetDialog(false);
     setCheer("成約おめでとう！リセット完了 🎉");
     setTimeout(() => setCheer(null), 2200);
   };
 
+  const cancelReset = () => {
+    setShowResetDialog(false);
+  };
+
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-between px-6 py-10 bg-gradient-hero">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-between px-6 py-10 bg-gradient-hero relative">
       <header className="w-full max-w-md text-center">
         <p className="text-xs tracking-[0.3em] text-muted-foreground uppercase">Rejection Log</p>
         <h1 className="text-2xl font-bold text-foreground mt-2">断られログ</h1>
@@ -103,7 +113,7 @@ function Index() {
         </button>
 
         <button
-          onClick={handleClose}
+          onClick={confirmReset}
           className="text-sm text-muted-foreground underline-offset-4 hover:underline"
         >
           成約した！カウンターをリセット
@@ -114,6 +124,34 @@ function Index() {
         断りは失敗じゃない。成約への階段。<br />
         個人情報は一切記録されません。
       </footer>
+
+      {showResetDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-6">
+          <div className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-2xl border border-border flex flex-col gap-5">
+            <div className="text-center">
+              <p className="text-3xl mb-2">🎉</p>
+              <h2 className="text-lg font-bold text-card-foreground">成約おめでとう！</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                カウンターと確率ゲージをリセットしますか？
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={cancelReset}
+                className="flex-1 py-3 rounded-xl bg-secondary text-secondary-foreground font-semibold text-sm transition-transform active:scale-95"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={doReset}
+                className="flex-1 py-3 rounded-xl bg-gradient-button text-primary-foreground font-semibold text-sm shadow-button transition-transform active:scale-95"
+              >
+                リセットする
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
