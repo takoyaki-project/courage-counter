@@ -48,6 +48,7 @@ function Index() {
   const [cheer, setCheer] = useState<string | null>(null);
   const [pulse, setPulse] = useState(0);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showFullResetDialog, setShowFullResetDialog] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
