@@ -193,6 +193,34 @@ function Index() {
           </div>
         </div>
       )}
+
+      {showFullResetDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-6">
+          <div className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-2xl border border-border flex flex-col gap-5">
+            <div className="text-center">
+              <p className="text-3xl mb-2">⚠️</p>
+              <h2 className="text-lg font-bold text-card-foreground">完全リセット</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                全データ（カウント・確率）を削除します。<br />本当によろしいですか？
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowFullResetDialog(false)}
+                className="flex-1 py-3 rounded-xl bg-secondary text-secondary-foreground font-semibold text-sm transition-transform active:scale-95"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={doFullReset}
+                className="flex-1 py-3 rounded-xl bg-destructive text-destructive-foreground font-semibold text-sm transition-transform active:scale-95"
+              >
+                完全リセット
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
