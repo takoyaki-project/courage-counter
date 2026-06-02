@@ -50,13 +50,40 @@ function Index() {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [showFullResetDialog, setShowFullResetDialog] = useState(false);
 
+  const loadCount = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed)) setCount(parsed);
+      }
+    } catch {
+      // private mode などで localStorage が使えない場合は無視
+    }
+  };
+
+  const saveCount = (value: number) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, String(value));
+    } catch {
+      // private mode などでは無視（インメモリのみ）
+    }
+  };
+
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) setCount(parseInt(saved, 10) || 0);
+    loadCount();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) {
+        const parsed = parseInt(e.newValue || "0", 10);
+        if (!isNaN(parsed)) setCount(parsed);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, String(count));
+    saveCount(count);
   }, [count]);
 
   const probability = Math.min(100, count * 10);
