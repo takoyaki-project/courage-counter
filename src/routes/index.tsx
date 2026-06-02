@@ -93,7 +93,7 @@ function Index() {
     setCount((c) => c + 1);
     setCheer(CHEERS[Math.floor(Math.random() * CHEERS.length)]);
     setPulse((p) => p + 1);
-    setTimeout(() => setCheer(null), 1800);
+    setTimeout(() => setCheer(null), 2800);
   };
 
   const confirmReset = () => {
@@ -145,22 +145,6 @@ function Index() {
           </div>
         </div>
 
-        <div className="h-14 flex items-center justify-center">
-          {cheer && (
-            <div
-              key={pulse}
-              className="px-5 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-glow animate-cheer"
-            >
-              {cheer}
-            </div>
-          )}
-          {!cheer && inZone && (
-            <p className="text-sm font-semibold text-primary text-center px-4">
-              🔥 分母が貯まった！ドカンと1件、来るゾーン突入！
-            </p>
-          )}
-        </div>
-
         <button
           onClick={handlePress}
           className="group relative w-56 h-56 rounded-full bg-gradient-button text-primary-foreground font-bold text-xl shadow-button transition-transform active:scale-95 hover:scale-[1.02]"
@@ -172,21 +156,44 @@ function Index() {
           </span>
         </button>
 
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex items-center gap-3 w-full max-w-xs">
           <button
             onClick={confirmReset}
-            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold text-sm border border-emerald-500/30 transition-transform active:scale-95 hover:bg-emerald-500/25"
           >
-            成約した！カウンターをリセット
+            <span>🎉</span>
+            <span>成約した！</span>
           </button>
           <button
             onClick={() => setShowFullResetDialog(true)}
-            className="text-xs text-destructive/80 underline-offset-4 hover:underline"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-destructive/10 text-destructive font-semibold text-sm border border-destructive/25 transition-transform active:scale-95 hover:bg-destructive/20"
           >
-            完全リセット（全データ削除）
+            <span>🗑️</span>
+            <span>完全リセット</span>
           </button>
         </div>
       </main>
+
+      {/* 名言オーバーレイ */}
+      {cheer && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center px-6 animate-cheer">
+          <div className="absolute inset-0 bg-black/20" onClick={() => setCheer(null)} />
+          <div className="relative w-full max-w-sm rounded-2xl bg-card/95 backdrop-blur-md p-8 shadow-2xl border border-border text-center">
+            <p className="text-4xl mb-4">💪</p>
+            <p className="text-lg font-bold text-card-foreground leading-relaxed">
+              {cheer}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!cheer && inZone && (
+        <div className="h-8 flex items-center justify-center">
+          <p className="text-sm font-semibold text-primary text-center px-4">
+            🔥 分母が貯まった！ドカンと1件、来るゾーン突入！
+          </p>
+        </div>
+      )}
 
       <footer className="text-xs text-muted-foreground text-center max-w-md">
         断りは失敗じゃない。成約への階段。<br />
