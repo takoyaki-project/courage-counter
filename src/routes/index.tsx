@@ -145,6 +145,17 @@ function Index() {
           </div>
         </div>
 
+        <button
+          onClick={handlePress}
+          className="group relative w-56 h-56 rounded-full bg-gradient-button text-primary-foreground font-bold text-xl shadow-button transition-transform active:scale-95 hover:scale-[1.02]"
+        >
+          <span className="absolute inset-2 rounded-full border-2 border-primary-foreground/20" />
+          <span className="relative flex flex-col items-center gap-1">
+            <span className="text-3xl">＋1</span>
+            <span className="text-sm font-medium opacity-90">断られた！</span>
+          </span>
+        </button>
+
         <div className="flex items-center gap-3 w-full max-w-xs">
           <button
             onClick={confirmReset}
