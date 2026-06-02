@@ -93,7 +93,7 @@ function Index() {
     setCount((c) => c + 1);
     setCheer(CHEERS[Math.floor(Math.random() * CHEERS.length)]);
     setPulse((p) => p + 1);
-    setTimeout(() => setCheer(null), 1800);
+    setTimeout(() => setCheer(null), 2800);
   };
 
   const confirmReset = () => {
