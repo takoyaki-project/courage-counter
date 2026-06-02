@@ -5,11 +5,32 @@ const STORAGE_KEY = "rejection-log-v1";
 const TARGET = 10; // 10回で1件成約想定
 
 const CHEERS = [
-  "ナイスチャレンジ！",
-  "分母が育ってる！",
-  "成約に一歩前進！",
-  "その勇気が財産だ！",
-  "確率はあなたの味方！",
+  // 偉人・漫画の名言風
+  "諦めたらそこで試合終了だよ",
+  "鳴かぬなら、次に行こうホトトギス（信長風）",
+  "敵は本能寺にあらず、次のビルにあり",
+  "為せば成る、為さねば成らぬ何事も",
+  "我以外皆我師。今の断りも学び",
+  "明日死ぬかのように生きよ、永遠に生きるかのように学べ",
+  "海賊王に、俺はなる！…の前に1件取る！",
+  // 体育会系・熱血先輩風
+  "ナイスチャレンジ！今の断られ方、次に繋がるいいスイングだ！",
+  "断られてからが本番！今の1件で成約に一歩近づいた！",
+  "今の1件で経験値ゲット！レベルアップだ！",
+  "声出していこう！次のドアを叩け！",
+  "汗かいた数だけ契約は近づく！",
+  "ファイト！お前の足は何のためにある！",
+  // クスッと笑える労い風
+  "お疲れ様！あそこの社長は今日、機嫌が悪かっただけ！",
+  "とりあえず、自販機で美味い缶コーヒーでも飲んでリセットしよ！",
+  "受付のお姉さんの塩対応も、芸のうち",
+  "断りはタダ。ノーリスク・ハイ経験値！",
+  "今日のあなた、靴底すり減らし選手権 優勝！",
+  "断られた数 = 行動した証。胸を張れ！",
+  // 確率論
+  "分母が育ってる！確率はあなたの味方！",
+  "ノーカウントの神様なんていない。全部前進！",
+  "成約までの距離、また1歩縮まった！",
 ];
 
 export const Route = createFileRoute("/")({
@@ -27,6 +48,7 @@ function Index() {
   const [cheer, setCheer] = useState<string | null>(null);
   const [pulse, setPulse] = useState(0);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showFullResetDialog, setShowFullResetDialog] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -62,12 +84,23 @@ function Index() {
     setShowResetDialog(false);
   };
 
+  const doFullReset = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setCount(0);
+    setShowFullResetDialog(false);
+    setCheer("完全リセット完了。さあ、ゼロから！");
+    setTimeout(() => setCheer(null), 2200);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-between px-6 py-10 bg-gradient-hero relative">
       <header className="w-full max-w-md text-center">
         <p className="text-xs tracking-[0.3em] text-muted-foreground uppercase">Rejection Log</p>
         <h1 className="text-2xl font-bold text-foreground mt-2">断られログ</h1>
         <p className="text-sm text-muted-foreground mt-1">ビルを出たら、ポチッと。</p>
+        <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+          10回声をかけて、3回話を聞いてもらえて、<br />1件成約する。
+        </p>
       </header>
 
       <main className="w-full max-w-md flex flex-col items-center gap-8">
@@ -112,12 +145,20 @@ function Index() {
           </span>
         </button>
 
-        <button
-          onClick={confirmReset}
-          className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-        >
-          成約した！カウンターをリセット
-        </button>
+        <div className="flex flex-col items-center gap-3">
+          <button
+            onClick={confirmReset}
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
+            成約した！カウンターをリセット
+          </button>
+          <button
+            onClick={() => setShowFullResetDialog(true)}
+            className="text-xs text-destructive/80 underline-offset-4 hover:underline"
+          >
+            完全リセット（全データ削除）
+          </button>
+        </div>
       </main>
 
       <footer className="text-xs text-muted-foreground text-center max-w-md">
@@ -147,6 +188,34 @@ function Index() {
                 className="flex-1 py-3 rounded-xl bg-gradient-button text-primary-foreground font-semibold text-sm shadow-button transition-transform active:scale-95"
               >
                 リセットする
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showFullResetDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-6">
+          <div className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-2xl border border-border flex flex-col gap-5">
+            <div className="text-center">
+              <p className="text-3xl mb-2">⚠️</p>
+              <h2 className="text-lg font-bold text-card-foreground">完全リセット</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                全データ（カウント・確率）を削除します。<br />本当によろしいですか？
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowFullResetDialog(false)}
+                className="flex-1 py-3 rounded-xl bg-secondary text-secondary-foreground font-semibold text-sm transition-transform active:scale-95"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={doFullReset}
+                className="flex-1 py-3 rounded-xl bg-destructive text-destructive-foreground font-semibold text-sm transition-transform active:scale-95"
+              >
+                完全リセット
               </button>
             </div>
           </div>
