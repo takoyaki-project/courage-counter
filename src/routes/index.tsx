@@ -120,26 +120,26 @@ function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-between px-6 py-10 bg-gradient-hero relative">
+    <div className="min-h-screen bg-background flex flex-col items-center px-5 pt-4 pb-24 bg-gradient-hero relative gap-4">
       <header className="w-full max-w-md text-center">
-        <p className="text-xs tracking-[0.3em] text-muted-foreground uppercase">Rejection Log</p>
-        <h1 className="text-2xl font-bold text-foreground mt-2">断られログ</h1>
-        <p className="text-sm text-muted-foreground mt-1">ビルを出たら、ポチッと。</p>
-        <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-          10回声をかけて、3回話を聞いてもらえて、<br />1件成約する。
+        <p className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">Rejection Log</p>
+        <h1 className="text-4xl font-extrabold text-foreground mt-1 tracking-tight">断られログ</h1>
+        <p className="text-base font-semibold text-foreground/80 mt-1">ビルを出たら、ポチッと。</p>
+        <p className="text-xs text-muted-foreground mt-1.5 leading-snug">
+          10回声をかけて、3回話を聞いてもらえて、1件成約する。
         </p>
       </header>
 
-      <main className="w-full max-w-md flex flex-col items-center gap-8">
-        <div className="relative w-64 h-64">
+      <main className="w-full max-w-md flex flex-col items-center gap-4">
+        <div className="relative w-40 h-40">
           <ProbabilityRing percent={probability} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-xs text-muted-foreground">成約確率</p>
-            <p className="text-5xl font-bold text-foreground tabular-nums">
+            <p className="text-[10px] text-muted-foreground">成約確率</p>
+            <p className="text-4xl font-bold text-foreground tabular-nums leading-none mt-0.5">
               {probability}
-              <span className="text-2xl text-muted-foreground">%</span>
+              <span className="text-xl text-muted-foreground">%</span>
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-[10px] text-muted-foreground mt-1">
               チャレンジ <span className="text-foreground font-semibold">{count}</span> / {TARGET}
             </p>
           </div>
@@ -147,7 +147,7 @@ function Index() {
 
         <button
           onClick={handlePress}
-          className="group relative w-56 h-56 rounded-full bg-gradient-button text-primary-foreground font-bold text-xl shadow-button transition-transform active:scale-95 hover:scale-[1.02]"
+          className="group relative w-44 h-44 rounded-full bg-gradient-button text-primary-foreground font-bold text-xl shadow-button transition-transform active:scale-95 hover:scale-[1.02]"
         >
           <span className="absolute inset-2 rounded-full border-2 border-primary-foreground/20" />
           <span className="relative flex flex-col items-center gap-1">
@@ -156,27 +156,33 @@ function Index() {
           </span>
         </button>
 
-        <div className="flex items-center gap-3 w-full max-w-xs">
+        <div className="flex items-center gap-2 w-full max-w-xs">
           <button
             onClick={confirmReset}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold text-sm border border-emerald-500/30 transition-transform active:scale-95 hover:bg-emerald-500/25"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold text-sm border border-emerald-500/30 transition-transform active:scale-95 hover:bg-emerald-500/25"
           >
             <span>🎉</span>
             <span>成約した！</span>
           </button>
           <button
             onClick={() => setShowFullResetDialog(true)}
-            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-destructive/10 text-destructive font-semibold text-sm border border-destructive/25 transition-transform active:scale-95 hover:bg-destructive/20"
+            className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-destructive/10 text-destructive font-semibold text-xs border border-destructive/25 transition-transform active:scale-95 hover:bg-destructive/20"
           >
             <span>🗑️</span>
-            <span>完全リセット</span>
+            <span>リセット</span>
           </button>
         </div>
+
+        {inZone && !cheer && (
+          <p className="text-xs font-semibold text-primary text-center px-4">
+            🔥 分母が貯まった！ドカンと1件、来るゾーン突入！
+          </p>
+        )}
       </main>
 
       {/* 名言オーバーレイ */}
       {cheer && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center px-6 animate-cheer">
+        <div className="fixed inset-0 z-40 flex items-center justify-center px-6 animate-cheer-long">
           <div className="absolute inset-0 bg-black/20" onClick={() => setCheer(null)} />
           <div className="relative w-full max-w-sm rounded-2xl bg-card/95 backdrop-blur-md p-8 shadow-2xl border border-border text-center">
             <p className="text-4xl mb-4">💪</p>
@@ -186,19 +192,6 @@ function Index() {
           </div>
         </div>
       )}
-
-      {!cheer && inZone && (
-        <div className="h-8 flex items-center justify-center">
-          <p className="text-sm font-semibold text-primary text-center px-4">
-            🔥 分母が貯まった！ドカンと1件、来るゾーン突入！
-          </p>
-        </div>
-      )}
-
-      <footer className="text-xs text-muted-foreground text-center max-w-md">
-        断りは失敗じゃない。成約への階段。<br />
-        個人情報は一切記録されません。
-      </footer>
 
       {showResetDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-6">
