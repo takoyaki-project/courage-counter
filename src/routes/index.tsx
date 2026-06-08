@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-const STORAGE_KEY = "rejection-log-v1";
-const HEARD_STORAGE_KEY = "heard-log-v1";
+const MONTHLY_STORAGE_KEY = "next-iko-monthly-v1";
+const LEGACY_REJECTED_KEY = "rejection-log-v1";
+const LEGACY_HEARD_KEY = "heard-log-v1";
+
+type MonthlyData = Record<string, { rejected: number; heard: number }>;
 
 const CHEERS_STANDARD = [
   "今日も一歩前進です",
@@ -26,11 +29,47 @@ const CHEERS_KANSAI = [
 ];
 
 function pickCheer() {
-  // 関西弁は20%程度で出現
   if (Math.random() < 0.2) {
     return CHEERS_KANSAI[Math.floor(Math.random() * CHEERS_KANSAI.length)];
   }
   return CHEERS_STANDARD[Math.floor(Math.random() * CHEERS_STANDARD.length)];
+}
+
+function currentMonthKey(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function formatMonthLabel(key: string) {
+  const [y, m] = key.split("-");
+  return `${y}年${parseInt(m, 10)}月`;
+}
+
+function loadMonthly(): MonthlyData {
+  try {
+    const raw = localStorage.getItem(MONTHLY_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") return parsed as MonthlyData;
+    }
+    // legacy 移行
+    const legacyR = parseInt(localStorage.getItem(LEGACY_REJECTED_KEY) || "0", 10);
+    const legacyH = parseInt(localStorage.getItem(LEGACY_HEARD_KEY) || "0", 10);
+    if (legacyR || legacyH) {
+      const key = currentMonthKey();
+      return { [key]: { rejected: legacyR || 0, heard: legacyH || 0 } };
+    }
+  } catch {
+    // ignore
+  }
+  return {};
+}
+
+function saveMonthly(data: MonthlyData) {
+  try {
+    localStorage.setItem(MONTHLY_STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // ignore
+  }
 }
 
 export const Route = createFileRoute("/")({
@@ -43,86 +82,67 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function safeGet(key: string) {
-  try {
-    const v = localStorage.getItem(key);
-    if (v === null) return 0;
-    const n = parseInt(v, 10);
-    return isNaN(n) ? 0 : n;
-  } catch {
-    return 0;
-  }
-}
-
-function safeSet(key: string, value: number) {
-  try {
-    localStorage.setItem(key, String(value));
-  } catch {
-    // ignore
-  }
-}
-
 function Index() {
-  const [rejected, setRejected] = useState(0);
-  const [heard, setHeard] = useState(0);
+  const [monthly, setMonthly] = useState<MonthlyData>({});
   const [cheer, setCheer] = useState<string | null>(null);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [showFullResetDialog, setShowFullResetDialog] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const monthKey = currentMonthKey();
 
   useEffect(() => {
-    setRejected(safeGet(STORAGE_KEY));
-    setHeard(safeGet(HEARD_STORAGE_KEY));
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) setRejected(safeGet(STORAGE_KEY));
-      if (e.key === HEARD_STORAGE_KEY) setHeard(safeGet(HEARD_STORAGE_KEY));
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    setMonthly(loadMonthly());
   }, []);
 
   useEffect(() => {
-    safeSet(STORAGE_KEY, rejected);
-  }, [rejected]);
+    if (Object.keys(monthly).length > 0) saveMonthly(monthly);
+  }, [monthly]);
 
-  useEffect(() => {
-    safeSet(HEARD_STORAGE_KEY, heard);
-  }, [heard]);
-
+  const current = monthly[monthKey] ?? { rejected: 0, heard: 0 };
+  const rejected = current.rejected;
+  const heard = current.heard;
   const meetingRate = rejected + heard > 0 ? (heard / (rejected + heard)) * 100 : 0;
 
-  const handleRejected = () => {
-    setRejected((c) => c + 1);
+  const bump = (field: "rejected" | "heard") => {
+    setMonthly((prev) => {
+      const cur = prev[monthKey] ?? { rejected: 0, heard: 0 };
+      return { ...prev, [monthKey]: { ...cur, [field]: cur[field] + 1 } };
+    });
     setCheer(pickCheer());
     setTimeout(() => setCheer(null), 6000);
   };
 
-  const handleHeard = () => {
-    setHeard((c) => c + 1);
-    setCheer(pickCheer());
-    setTimeout(() => setCheer(null), 6000);
-  };
+  const handleRejected = () => bump("rejected");
+  const handleHeard = () => bump("heard");
 
   const doReset = () => {
-    setRejected(0);
-    setHeard(0);
+    // 今月分のみリセット（履歴は残す）
+    setMonthly((prev) => ({ ...prev, [monthKey]: { rejected: 0, heard: 0 } }));
     setShowResetDialog(false);
-    setCheer("成約おめでとう！リセット完了 🎉");
+    setCheer("成約おめでとう！今月分リセット 🎉");
     setTimeout(() => setCheer(null), 2200);
   };
 
   const doFullReset = () => {
     try {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(HEARD_STORAGE_KEY);
+      localStorage.removeItem(MONTHLY_STORAGE_KEY);
+      localStorage.removeItem(LEGACY_REJECTED_KEY);
+      localStorage.removeItem(LEGACY_HEARD_KEY);
     } catch {
       // ignore
     }
-    setRejected(0);
-    setHeard(0);
+    setMonthly({});
     setShowFullResetDialog(false);
     setCheer("完全リセット完了。さあ、ゼロから！");
     setTimeout(() => setCheer(null), 2200);
   };
+
+  const sortedMonths = useMemo(
+    () => Object.keys(monthly).sort((a, b) => (a < b ? 1 : -1)),
+    [monthly],
+  );
+  const hasHistory = sortedMonths.length > 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center px-4 pt-5 pb-20 bg-gradient-hero relative gap-5">
@@ -137,7 +157,7 @@ function Index() {
       </header>
 
       <main className="w-full max-w-md flex flex-col items-center gap-5">
-        {/* 実績カード */}
+        {/* 今月の実績カード */}
         <div className="w-full grid grid-cols-3 gap-2">
           <StatCard label="断られた" value={rejected} unit="件" />
           <StatCard label="話を聞けた" value={heard} unit="件" accent />
@@ -175,8 +195,15 @@ function Index() {
           </button>
         </div>
 
-        {/* リセット系 */}
+        {/* 履歴トグル + リセット */}
         <div className="flex items-center gap-4 mt-1">
+          <button
+            onClick={() => setShowHistory((v) => !v)}
+            className="flex items-center gap-1.5 py-2 px-4 rounded-full bg-card/70 text-foreground/80 font-semibold text-xs border border-border transition-transform active:scale-95 hover:bg-card"
+          >
+            <span>📅</span>
+            <span>{showHistory ? "履歴を閉じる" : "月別履歴"}</span>
+          </button>
           <button
             onClick={() => setShowResetDialog(true)}
             className="flex items-center gap-1.5 py-2 px-4 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold text-xs border border-emerald-500/30 transition-transform active:scale-95 hover:bg-emerald-500/25"
@@ -184,16 +211,71 @@ function Index() {
             <span>🎉</span>
             <span>成約した！</span>
           </button>
-          <button
-            onClick={() => setShowFullResetDialog(true)}
-            className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-4 transition-colors"
-          >
-            完全リセット
-          </button>
         </div>
+
+        {/* 月別履歴 */}
+        {showHistory && (
+          <section className="w-full mt-1">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-px flex-1 bg-border" />
+              <p className="text-xs tracking-[0.25em] text-muted-foreground">履歴</p>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            {!hasHistory && (
+              <p className="text-center text-xs text-muted-foreground py-6">
+                まだ記録がありません。今日からポチッ。
+              </p>
+            )}
+
+            <ul className="flex flex-col">
+              {sortedMonths.map((key) => {
+                const m = monthly[key];
+                const total = m.rejected + m.heard;
+                const rate = total > 0 ? ((m.heard / total) * 100).toFixed(1) : "0.0";
+                const isCurrent = key === monthKey;
+                return (
+                  <li
+                    key={key}
+                    className="border-t border-border py-3 flex items-center justify-between gap-3 last:border-b"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-foreground">
+                        {formatMonthLabel(key)}
+                      </p>
+                      {isCurrent && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+                          今月
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-baseline gap-3 text-right">
+                      <p className="text-base font-bold tabular-nums text-foreground">
+                        {m.rejected}
+                        <span className="text-muted-foreground mx-1 font-normal">/</span>
+                        {m.heard}
+                      </p>
+                      <p className="text-xs text-muted-foreground tabular-nums w-14">
+                        {rate}%
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setShowFullResetDialog(true)}
+                className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-4 transition-colors"
+              >
+                完全リセット
+              </button>
+            </div>
+          </section>
+        )}
       </main>
 
-      {/* 名言オーバーレイ */}
       {cheer && (
         <div className="fixed inset-0 z-40 flex items-center justify-center px-6 animate-cheer-long pointer-events-none">
           <div
@@ -214,7 +296,9 @@ function Index() {
               <p className="text-3xl mb-2">🎉</p>
               <h2 className="text-lg font-bold text-card-foreground">成約おめでとう！</h2>
               <p className="text-sm text-muted-foreground mt-2">
-                カウンターをリセットしますか？
+                今月分のカウンターをリセットしますか？
+                <br />
+                過去の月別履歴は残ります。
               </p>
             </div>
             <div className="flex gap-3">
@@ -242,7 +326,7 @@ function Index() {
               <p className="text-3xl mb-2">⚠️</p>
               <h2 className="text-lg font-bold text-card-foreground">完全リセット</h2>
               <p className="text-sm text-muted-foreground mt-2">
-                全データ（断られた・話を聞けた）を削除します。
+                月別履歴も含め、全データを削除します。
                 <br />
                 本当によろしいですか？
               </p>
