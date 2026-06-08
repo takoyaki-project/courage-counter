@@ -142,10 +142,16 @@
 }
 
 :root {
-  --gradient-hero: radial-gradient(circle at 50% 0%, oklch(0.95 0.05 60), oklch(0.98 0.01 90) 60%);
+  --background: oklch(0.97 0.02 75);
+  --gradient-hero: linear-gradient(180deg, #fdf6ee 0%, #f8ede0 100%);
   --gradient-button: linear-gradient(135deg, oklch(0.65 0.22 30), oklch(0.72 0.2 55));
-  --shadow-button: 0 20px 40px -12px oklch(0.62 0.21 30 / 0.5);
+  --shadow-button: 0 12px 28px -10px rgb(0 0 0 / 0.18);
   --shadow-glow: 0 8px 24px -8px oklch(0.7 0.2 50 / 0.6);
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
 
 @keyframes cheer {
@@ -176,7 +182,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: ui-sans-serif, -apple-system, "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    font-family: "Noto Sans JP", ui-sans-serif, -apple-system, "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
   }
 }
 
