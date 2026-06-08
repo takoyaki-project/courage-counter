@@ -92,14 +92,14 @@ function Index() {
 
   const handleRejected = () => {
     setRejected((c) => c + 1);
-    setCheer(CHEERS[Math.floor(Math.random() * CHEERS.length)]);
+    setCheer(pickCheer());
     setTimeout(() => setCheer(null), 6000);
   };
 
   const handleHeard = () => {
     setHeard((c) => c + 1);
-    setCheer("ナイス！話を聞いてもらえた、大きな一歩！");
-    setTimeout(() => setCheer(null), 3500);
+    setCheer(pickCheer());
+    setTimeout(() => setCheer(null), 6000);
   };
 
   const doReset = () => {
@@ -125,7 +125,7 @@ function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center px-5 pt-5 pb-24 bg-gradient-hero relative gap-5">
+    <div className="min-h-screen bg-background flex flex-col items-center px-4 pt-5 pb-20 bg-gradient-hero relative gap-5">
       <header className="w-full max-w-md text-center">
         <p className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">
           飛び込み営業応援ツール
@@ -141,49 +141,56 @@ function Index() {
         <div className="w-full grid grid-cols-3 gap-2">
           <StatCard label="断られた" value={rejected} unit="件" />
           <StatCard label="話を聞けた" value={heard} unit="件" accent />
-          <StatCard
-            label="面談化率"
-            value={meetingRate.toFixed(1)}
-            unit="%"
-          />
+          <StatCard label="面談化率" value={meetingRate.toFixed(1)} unit="%" />
         </div>
 
-        {/* メインボタン */}
-        <button
-          onClick={handleRejected}
-          className="group relative w-48 h-48 rounded-full bg-gradient-button text-primary-foreground font-bold shadow-button transition-transform active:scale-95 hover:scale-[1.02] mt-2"
-        >
-          <span className="absolute inset-2 rounded-full border-2 border-primary-foreground/20" />
-          <span className="relative flex flex-col items-center gap-1">
-            <span className="text-4xl">＋1</span>
-            <span className="text-sm font-medium opacity-90">断られた！</span>
-          </span>
-        </button>
+        {/* メインボタン2つ */}
+        <div className="w-full flex items-center justify-center gap-3 mt-1">
+          <button
+            onClick={handleRejected}
+            className="relative w-40 h-40 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-white font-bold shadow-button transition-transform active:scale-95 hover:scale-[1.02]"
+          >
+            <span className="absolute inset-2 rounded-full border-2 border-white/25" />
+            <span className="relative flex flex-col items-center gap-1 px-2">
+              <span className="text-3xl leading-none">🔴</span>
+              <span className="text-base font-bold leading-tight">断られた！</span>
+              <span className="text-xs opacity-90">＋1</span>
+            </span>
+          </button>
 
-        {/* サブアクション */}
-        <div className="flex items-center gap-2 w-full max-w-xs">
           <button
             onClick={handleHeard}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-primary/10 text-primary font-semibold text-sm border border-primary/25 transition-transform active:scale-95 hover:bg-primary/15"
+            className="relative w-40 h-40 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 text-amber-950 font-bold shadow-button transition-transform active:scale-95 hover:scale-[1.02]"
           >
-            <span>👂</span>
-            <span>話を聞けた</span>
-          </button>
-          <button
-            onClick={() => setShowResetDialog(true)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold text-sm border border-emerald-500/30 transition-transform active:scale-95 hover:bg-emerald-500/25"
-          >
-            <span>🎉</span>
-            <span>成約！</span>
+            <span className="absolute inset-2 rounded-full border-2 border-amber-950/20" />
+            <span className="relative flex flex-col items-center gap-1 px-2">
+              <span className="text-3xl leading-none">🟡</span>
+              <span className="text-sm font-bold leading-tight text-center">
+                話を聞いて
+                <br />
+                もらえた！
+              </span>
+              <span className="text-xs opacity-80">＋1</span>
+            </span>
           </button>
         </div>
 
-        <button
-          onClick={() => setShowFullResetDialog(true)}
-          className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-4 transition-colors"
-        >
-          完全リセット
-        </button>
+        {/* リセット系 */}
+        <div className="flex items-center gap-4 mt-1">
+          <button
+            onClick={() => setShowResetDialog(true)}
+            className="flex items-center gap-1.5 py-2 px-4 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold text-xs border border-emerald-500/30 transition-transform active:scale-95 hover:bg-emerald-500/25"
+          >
+            <span>🎉</span>
+            <span>成約した！</span>
+          </button>
+          <button
+            onClick={() => setShowFullResetDialog(true)}
+            className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-4 transition-colors"
+          >
+            完全リセット
+          </button>
+        </div>
       </main>
 
       {/* 名言オーバーレイ */}
