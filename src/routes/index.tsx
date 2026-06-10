@@ -166,6 +166,7 @@ function Index() {
       // ignore
     }
     setMonthly({});
+    setLastAction(null);
     setShowFullResetDialog(false);
     setCheer("完全リセット完了。さあ、ゼロから！");
     setTimeout(() => setCheer(null), 2200);
