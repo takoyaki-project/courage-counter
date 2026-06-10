@@ -92,6 +92,7 @@ function Index() {
   const [showHistory, setShowHistory] = useState(false);
   const [showFullResetDialog, setShowFullResetDialog] = useState(false);
   const [confetti, setConfetti] = useState(false);
+  const [lastAction, setLastAction] = useState<{ field: "rejected" | "heard" | "closed"; monthKey: string } | null>(null);
 
   const monthKey = currentMonthKey();
 
