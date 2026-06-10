@@ -217,6 +217,22 @@ function Index() {
           />
         </div>
 
+        {/* アンドゥ */}
+        <div className="w-full flex justify-center -mt-2">
+          <button
+            onClick={handleUndo}
+            disabled={!lastAction}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/70 backdrop-blur border border-border text-xs font-semibold text-foreground/70 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <span>↩︎</span>
+            <span>
+              {lastAction
+                ? `「${lastAction.field === "rejected" ? "断られた" : lastAction.field === "heard" ? "話を聞けた" : "成約した"}」を1つ戻す`
+                : "1つ戻す"}
+            </span>
+          </button>
+        </div>
+
         {/* 履歴アコーディオン */}
         <div className="w-full mt-1">
           <button
