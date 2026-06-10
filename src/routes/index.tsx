@@ -123,7 +123,30 @@ function Index() {
       };
     });
     setCheer(msg ?? pickCheer());
+    setLastAction({ field, monthKey });
     setTimeout(() => setCheer(null), 6000);
+  };
+
+  const handleUndo = () => {
+    if (!lastAction) return;
+    const { field, monthKey: mk } = lastAction;
+    setMonthly((prev) => {
+      const cur = prev[mk];
+      if (!cur) return prev;
+      const next = (cur[field] ?? 0) - 1;
+      return {
+        ...prev,
+        [mk]: {
+          rejected: cur.rejected,
+          heard: cur.heard,
+          closed: cur.closed ?? 0,
+          [field]: next < 0 ? 0 : next,
+        },
+      };
+    });
+    setLastAction(null);
+    setCheer("1つ戻しました");
+    setTimeout(() => setCheer(null), 2000);
   };
 
   const handleRejected = () => bump("rejected");
