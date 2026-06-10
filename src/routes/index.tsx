@@ -92,6 +92,7 @@ function Index() {
   const [showHistory, setShowHistory] = useState(false);
   const [showFullResetDialog, setShowFullResetDialog] = useState(false);
   const [confetti, setConfetti] = useState(false);
+  const [lastAction, setLastAction] = useState<{ field: "rejected" | "heard" | "closed"; monthKey: string } | null>(null);
 
   const monthKey = currentMonthKey();
 
@@ -122,7 +123,30 @@ function Index() {
       };
     });
     setCheer(msg ?? pickCheer());
+    setLastAction({ field, monthKey });
     setTimeout(() => setCheer(null), 6000);
+  };
+
+  const handleUndo = () => {
+    if (!lastAction) return;
+    const { field, monthKey: mk } = lastAction;
+    setMonthly((prev) => {
+      const cur = prev[mk];
+      if (!cur) return prev;
+      const next = (cur[field] ?? 0) - 1;
+      return {
+        ...prev,
+        [mk]: {
+          rejected: cur.rejected,
+          heard: cur.heard,
+          closed: cur.closed ?? 0,
+          [field]: next < 0 ? 0 : next,
+        },
+      };
+    });
+    setLastAction(null);
+    setCheer("1つ戻しました");
+    setTimeout(() => setCheer(null), 2000);
   };
 
   const handleRejected = () => bump("rejected");
@@ -142,6 +166,7 @@ function Index() {
       // ignore
     }
     setMonthly({});
+    setLastAction(null);
     setShowFullResetDialog(false);
     setCheer("完全リセット完了。さあ、ゼロから！");
     setTimeout(() => setCheer(null), 2200);
@@ -191,6 +216,22 @@ function Index() {
             onClick={handleClosed}
             className="bg-gradient-to-b from-[#5cc28e] to-[#3fa46d] focus-visible:ring-emerald-400"
           />
+        </div>
+
+        {/* アンドゥ */}
+        <div className="w-full flex justify-center -mt-2">
+          <button
+            onClick={handleUndo}
+            disabled={!lastAction}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/70 backdrop-blur border border-border text-xs font-semibold text-foreground/70 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <span>↩︎</span>
+            <span>
+              {lastAction
+                ? `「${lastAction.field === "rejected" ? "断られた" : lastAction.field === "heard" ? "話を聞けた" : "成約した"}」を1つ戻す`
+                : "1つ戻す"}
+            </span>
+          </button>
         </div>
 
         {/* 履歴アコーディオン */}
