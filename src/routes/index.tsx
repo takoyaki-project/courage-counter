@@ -301,7 +301,7 @@ function Index() {
               </ul>
             </div>
           )}
-        </div>
+        </section>
       </main>
 
       {/* フッター */}
