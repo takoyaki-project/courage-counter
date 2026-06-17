@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://courage-counter.lovable.app/sitemap.xml
