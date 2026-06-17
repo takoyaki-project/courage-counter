@@ -79,8 +79,15 @@ function saveMonthly(data: MonthlyData) {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "次行こか - 飛び込み営業応援ツール" },
-      { name: "description", content: "飛び込み営業の心を支えるカウンター。ビルを出たら、ポチッ。" },
+      { title: "次行こか — 飛び込み営業応援ツール｜ワンタップで結果を記録" },
+      { name: "description", content: "「次行こか」は飛び込み営業の結果をワンタップで記録する応援ツール。断られた件数・話を聞けた件数・面談化率を月別に可視化し、次の一歩を後押しします。" },
+      { property: "og:title", content: "次行こか — 飛び込み営業応援ツール" },
+      { property: "og:description", content: "飛び込み営業の結果をワンタップで記録。断られた件数・話を聞けた件数・面談化率を月別に可視化し、次の一歩を後押しする応援ツールです。" },
+      { property: "og:url", content: "https://courage-counter.lovable.app/" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://courage-counter.lovable.app/" },
     ],
   }),
   component: Index,
@@ -186,6 +193,7 @@ function Index() {
         </p>
         <h1 className="text-5xl font-black text-foreground mt-1.5 tracking-tight">
           次行こか
+          <span className="sr-only"> — 飛び込み営業応援ツール</span>
         </h1>
         <p className="text-sm text-muted-foreground mt-2">ビルを出たら、ポチッ。</p>
       </header>
