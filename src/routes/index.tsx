@@ -200,11 +200,14 @@ function Index() {
 
       <main className="w-full max-w-md flex flex-col gap-5">
         {/* 統計カード */}
-        <div className="w-full grid grid-cols-3 gap-2">
-          <StatCard label="断られた" value={rejected} unit="件" />
-          <StatCard label="話を聞けた" value={heard} unit="件" accent />
-          <StatCard label="面談化率" value={meetingRate.toFixed(1)} unit="%" />
-        </div>
+        <section aria-labelledby="stats-heading">
+          <h2 id="stats-heading" className="sr-only">今日の活動記録</h2>
+          <div className="w-full grid grid-cols-3 gap-2">
+            <StatCard label="断られた" value={rejected} unit="件" />
+            <StatCard label="話を聞けた" value={heard} unit="件" accent />
+            <StatCard label="面談化率" value={meetingRate.toFixed(1)} unit="%" />
+          </div>
+        </section>
 
         {/* メインボタン: 信号機 */}
         <div className="w-full flex flex-col gap-2.5 px-1">
@@ -243,7 +246,8 @@ function Index() {
         </div>
 
         {/* 履歴アコーディオン */}
-        <div className="w-full mt-1">
+        <section aria-labelledby="history-heading" className="w-full mt-1">
+          <h2 id="history-heading" className="sr-only">月別の活動履歴</h2>
           <button
             onClick={() => setShowHistory((v) => !v)}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-white/70 backdrop-blur border border-border text-sm font-semibold text-foreground/80 transition-transform active:scale-[0.98]"
