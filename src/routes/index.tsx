@@ -293,13 +293,16 @@ function Index() {
       </main>
 
       {/* フッター */}
-      <footer className="mt-auto pt-6">
+      <footer className="mt-auto pt-6 flex flex-col items-center gap-2">
         <button
           onClick={() => setShowFullResetDialog(true)}
           className="text-xs text-muted-foreground hover:text-destructive underline underline-offset-4 transition-colors"
         >
           完全リセット
         </button>
+        <div className="text-[10px] text-muted-foreground/60 tracking-wider">
+          TAKOYAKI PROJECT
+        </div>
       </footer>
 
       {/* 紙吹雪 */}
