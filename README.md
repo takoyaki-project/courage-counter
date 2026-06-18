@@ -19,7 +19,7 @@
 ## 🚀 公開URL
 
 ▶ アプリを開く
- https://takoyaki-project.github.io/courage-counter/
+ https://courage-counter.lovable.app
 
 ---
 
